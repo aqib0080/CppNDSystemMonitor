@@ -231,7 +231,7 @@ string LinuxParser::Ram(int pid) {
     {
     std::istringstream linestream(line);
     while (linestream >> key >> value) {
-      if(key == "VmSize:")
+      if(key == "VmData:")
       {
         ram = value;
         return to_string(stoi(ram)/1024);
@@ -288,7 +288,7 @@ string LinuxParser::User(int pid) {
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::UpTime(int pid){
-  string line;
+  string line, key;
   string token;
   int count = 0;
   std::ifstream stream(kProcDirectory + to_string(pid)+ kStatFilename);
@@ -297,12 +297,12 @@ long LinuxParser::UpTime(int pid){
     {
       if(count == 21)
       {
-        return stol(token)/sysconf(_SC_CLK_TCK);
+        return UpTime() - stol(token)/sysconf(_SC_CLK_TCK);
       }
 
     count += 1;
     }
   }
-  return stol(token)*sysconf(_SC_CLK_TCK);
+  return UpTime() - stol(token)/sysconf(_SC_CLK_TCK);
 
 } 
